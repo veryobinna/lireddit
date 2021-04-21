@@ -2,6 +2,7 @@ import { PROD } from "./constants";
 import { Post } from "./entities/Post";
 import { MikroORM} from "@mikro-orm/core";
 import path from 'path';
+import { User } from "./entities/User";
 
 export default {
     migrations:{
@@ -9,7 +10,7 @@ export default {
         pattern: /^[\w-]+\d+\.[tj]s$/, // regex pattern for the migration files
         disableForeignKeys: false
     },
-    entities:[Post],
+    entities:[Post, User],
     dbName:'lireddit',
     user: "my_user",
     password:"root",

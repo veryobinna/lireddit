@@ -1,4 +1,3 @@
-import { title } from "node:process";
 import { MyContext } from "src/types";
 import {Resolver, Query, Ctx, Arg, Int, Mutation} from "type-graphql";
 import {Post} from "../entities/Post"
