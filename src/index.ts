@@ -9,6 +9,13 @@ import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/posts";
 import { UserResolver } from "./resolvers/user";
 
+import redis from "redis";
+import session from "express-session";
+import connectRediss from "connect-redis";
+import { PROD } from "./constants";
+import { MyContext } from "./types";
+
+
 const main = async () =>{
     const orm = await MikroORM.init(microConfig) //connect to db
     await orm.getMigrator().up(); // run migration
@@ -17,11 +24,35 @@ const main = async () =>{
     // app.get("/", (_, res)=>{
     //     res.send("Hello")
     // })
+
+    const RedisStore = connectRediss(session)
+    const redisClient = redis.createClient()
+
+    app.use(
+        session({
+            name:"qide",
+            store: new RedisStore({ 
+                client: redisClient,
+                disableTouch:true,
+            }),
+            cookie:{
+                maxAge: 1000*60*60*24*365*10, //10 years
+                httpOnly: true,
+                sameSite: "lax",
+                secure: PROD //cookie only works inn https
+            },
+            saveUninitialized: false,
+            secret: 'keyboardranndomcat',
+            resave: false,
+
+        })
+    )
+
     const apolloServer = new ApolloServer({
         schema : await buildSchema({
             resolvers: [HelloResolver, PostResolver, UserResolver]
         }),
-        context: () => ({em:orm.em})
+        context: ({req, res}):MyContext => ({em:orm.em, req, res})
     });
 
     apolloServer.applyMiddleware({app});
