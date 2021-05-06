@@ -9,7 +9,7 @@
       "esnext.asynciterable"
     ],
     "skipLibCheck": true,
-    "strict": true,
+    // "strict": true,
     "sourceMap": true,
     "outDir": "./dist",
     "moduleResolution": "node",
